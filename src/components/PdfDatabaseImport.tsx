@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Database, RefreshCw } from 'lucide-react';
 import FileUpload from '@/components/FileUpload';
-import { resetExpertsDatabase } from '@/utils/expertMatching';
+import { resetExpertsDatabase } from '@/utils/experts';
 import { useToast } from '@/hooks/use-toast';
 
 const PdfDatabaseImport = () => {

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -9,7 +8,7 @@ import { Card } from '@/components/ui/card';
 import MessageSpace from '@/components/MessageSpace';
 import PaymentForm from '@/components/PaymentForm';
 import FileUpload from '@/components/FileUpload';
-import { Expert, getExpertById } from '@/utils/expertMatching';
+import { Expert, getExpertById } from '@/utils/experts';
 import { MessageSquare, FileText, CreditCard, ChevronLeft, Video, Calendar } from 'lucide-react';
 
 const Workspace = () => {
@@ -89,7 +88,7 @@ const Workspace = () => {
           
           <div className="flex items-center gap-3">
             {isPaid ? (
-              <Badge variant="success" className="bg-green-100 text-green-800 border-green-200">
+              <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">
                 Collaboration active
               </Badge>
             ) : (

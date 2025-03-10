@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { Search, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
-import { findExperts } from '@/utils/expertMatching';
+import { findExperts } from '@/utils/experts';
 
 const SearchBar = () => {
   const [keyword, setKeyword] = useState('');

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { setOpenAIApiKey } from '@/utils/expertMatching';
+import { setOpenAIApiKey } from '@/utils/experts';
 import { useToast } from '@/hooks/use-toast';
 
 const ApiKeyInput = () => {

@@ -1,9 +1,8 @@
-
 import React, { useCallback, useState } from 'react';
 import { Upload, X, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { importExpertsFromPDF } from '@/utils/expertMatching';
+import { importExpertsFromPDF } from '@/utils/experts';
 
 interface FileUploadProps {
   onFilesSelected: (files: File[]) => void;

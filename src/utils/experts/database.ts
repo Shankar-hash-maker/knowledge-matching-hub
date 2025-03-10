@@ -1,16 +1,5 @@
-export interface Expert {
-  id: string;
-  name: string;
-  title: string;
-  description: string;
-  location: string;
-  email: string;
-  phone: string;
-  avatar: string;
-  specialties: string[];
-  expertiseLevel: string;
-  availability: string;
-}
+
+import { Expert } from './types';
 
 // Simulated database of experts
 let expertsDatabase: Expert[] = [
@@ -84,121 +73,9 @@ let expertsDatabase: Expert[] = [
 // Store original experts for reset
 const originalExperts = [...expertsDatabase];
 
-let openaiApiKey: string | null = null;
-
-export const setOpenAIApiKey = (key: string) => {
-  openaiApiKey = key;
-};
-
-async function analyzeSearchQuery(query: string): Promise<string> {
-  if (!openaiApiKey) {
-    throw new Error('OpenAI API key not set');
-  }
-
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${openaiApiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'gpt-4o-mini',
-      messages: [
-        {
-          role: 'system',
-          content: "Vous êtes un assistant spécialisé dans l'analyse des besoins en expertise juridique. Analysez la requête et extrayez les mots-clés pertinents liés aux domaines d'expertise, sans ajouter de contexte supplémentaire. Répondez uniquement avec les mots-clés essentiels, séparés par des virgules."
-        },
-        {
-          role: 'user',
-          content: query
-        }
-      ],
-      temperature: 0.2,
-      max_tokens: 100
-    }),
-  });
-
-  const data = await response.json();
-  return data.choices[0].message.content;
-}
-
-export const findExperts = async (keyword: string, location: string = '') => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  try {
-    // Analyze the search query using AI
-    const analyzedKeywords = await analyzeSearchQuery(keyword);
-    console.log('Analyzed keywords:', analyzedKeywords);
-    
-    // Convert analyzed keywords to array and clean
-    const keywordArray = analyzedKeywords
-      .split(',')
-      .map(k => k.trim().toLowerCase())
-      .filter(k => k.length > 0);
-    
-    // Filter experts based on keyword and location
-    const matchedExperts = expertsDatabase.filter(expert => {
-      // Check each analyzed keyword against expert fields
-      const keywordMatch = keywordArray.some(keyword =>
-        expert.title.toLowerCase().includes(keyword) ||
-        expert.description.toLowerCase().includes(keyword) ||
-        expert.specialties.some(s => s.toLowerCase().includes(keyword))
-      );
-      
-      // If no location filter, return keyword matches
-      if (!location) return keywordMatch;
-      
-      // If location filter provided, check for match
-      const locationMatch = expert.location.toLowerCase().includes(location.toLowerCase());
-      
-      return keywordMatch && locationMatch;
-    });
-    
-    // Sort experts by relevance (number of matching keywords)
-    const scoredExperts = matchedExperts.map(expert => {
-      const score = keywordArray.reduce((acc, keyword) => {
-        return acc + (
-          (expert.title.toLowerCase().includes(keyword) ? 3 : 0) +
-          (expert.description.toLowerCase().includes(keyword) ? 2 : 0) +
-          (expert.specialties.some(s => s.toLowerCase().includes(keyword)) ? 3 : 0)
-        );
-      }, 0);
-      return { expert, score };
-    });
-    
-    // Sort by score and return top 5
-    return scoredExperts
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 5)
-      .map(({ expert }) => expert);
-  } catch (error) {
-    console.error('Error analyzing search query:', error);
-    // Fallback to basic search if AI analysis fails
-    return findExpertsBasic(keyword, location);
-  }
-};
-
-// Basic search function as fallback
-const findExpertsBasic = (keyword: string, location: string = '') => {
-  const keywordLower = keyword.toLowerCase();
-  
-  const matchedExperts = expertsDatabase.filter(expert => {
-    const keywordMatch = 
-      expert.title.toLowerCase().includes(keywordLower) ||
-      expert.description.toLowerCase().includes(keywordLower) ||
-      expert.specialties.some(s => s.toLowerCase().includes(keywordLower));
-    
-    if (!location) return keywordMatch;
-    
-    const locationMatch = expert.location.toLowerCase().includes(location.toLowerCase());
-    
-    return keywordMatch && locationMatch;
-  });
-  
-  return matchedExperts.slice(0, 5);
-};
-
+/**
+ * Get expert by ID
+ */
 export const getExpertById = async (id: string): Promise<Expert | undefined> => {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 500));
@@ -208,8 +85,6 @@ export const getExpertById = async (id: string): Promise<Expert | undefined> => 
 
 /**
  * Import experts from a PDF file
- * In a real implementation, this would use a PDF parser library
- * and potentially AI to extract structured information
  */
 export const importExpertsFromPDF = async (pdfFile: File): Promise<void> => {
   // Simulate processing delay
@@ -277,3 +152,7 @@ export const resetExpertsDatabase = () => {
   return Promise.resolve();
 };
 
+/**
+ * Expose the database for use in search module
+ */
+export const getExpertsDatabase = () => expertsDatabase;

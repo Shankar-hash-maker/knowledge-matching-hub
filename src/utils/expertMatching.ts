@@ -1,3 +1,4 @@
+
 export interface Expert {
   id: string;
   name: string;
@@ -106,7 +107,7 @@ async function analyzeSearchQuery(query: string): Promise<string> {
       messages: [
         {
           role: 'system',
-          content: 'Vous êtes un assistant spécialisé dans l'analyse des besoins en expertise juridique. Analysez la requête et extrayez les mots-clés pertinents liés aux domaines d'expertise, sans ajouter de contexte supplémentaire. Répondez uniquement avec les mots-clés essentiels, séparés par des virgules.'
+          content: "Vous êtes un assistant spécialisé dans l'analyse des besoins en expertise juridique. Analysez la requête et extrayez les mots-clés pertinents liés aux domaines d'expertise, sans ajouter de contexte supplémentaire. Répondez uniquement avec les mots-clés essentiels, séparés par des virgules."
         },
         {
           role: 'user',

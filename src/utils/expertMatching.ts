@@ -13,7 +13,7 @@ export interface Expert {
 }
 
 // Simulated database of experts
-const expertsDatabase: Expert[] = [
+let expertsDatabase: Expert[] = [
   {
     id: "1",
     name: "Dr. Marie Laurent",
@@ -81,6 +81,9 @@ const expertsDatabase: Expert[] = [
   }
 ];
 
+// Store original experts for reset
+const originalExperts = [...expertsDatabase];
+
 /**
  * Simulates a deep learning search to find relevant experts
  * In a real implementation, this would use vector embeddings or a similar technique
@@ -121,4 +124,75 @@ export const getExpertById = async (id: string): Promise<Expert | undefined> => 
   await new Promise(resolve => setTimeout(resolve, 500));
   
   return expertsDatabase.find(expert => expert.id === id);
+};
+
+/**
+ * Import experts from a PDF file
+ * In a real implementation, this would use a PDF parser library
+ * and potentially AI to extract structured information
+ */
+export const importExpertsFromPDF = async (pdfFile: File): Promise<void> => {
+  // Simulate processing delay
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  
+  console.log("Processing PDF database:", pdfFile.name);
+  
+  // Since we can't actually read PDFs in this demo,
+  // we'll simulate adding new experts to the database
+  const newExperts: Expert[] = [
+    {
+      id: "6",
+      name: "Philippe Durand",
+      title: "Expert judiciaire bâtiment",
+      description: "Expert en pathologie du bâtiment spécialisé dans les litiges de construction et les sinistres immobiliers.",
+      location: "Bordeaux, France",
+      email: "p.durand@expert.fr",
+      phone: "05 56 12 34 56",
+      avatar: "https://randomuser.me/api/portraits/men/54.jpg",
+      specialties: ["Pathologie du bâtiment", "Sinistres", "Construction"],
+      expertiseLevel: "Expert judiciaire",
+      availability: "Disponible sous 72h"
+    },
+    {
+      id: "7",
+      name: "Dr. Claire Petit",
+      title: "Expert en marchés financiers",
+      description: "Docteur en économie spécialisée dans l'analyse des produits financiers complexes et la régulation des marchés.",
+      location: "Paris, France",
+      email: "c.petit@expert.fr",
+      phone: "01 45 67 89 10",
+      avatar: "https://randomuser.me/api/portraits/women/54.jpg",
+      specialties: ["Produits dérivés", "Régulation financière", "Valorisation"],
+      expertiseLevel: "Expert certifié AMF",
+      availability: "Disponible"
+    },
+    {
+      id: "8",
+      name: "Thomas Legrand",
+      title: "Expert en droit du travail",
+      description: "Juriste spécialisé dans les contentieux sociaux et l'analyse des relations employeur-employé.",
+      location: "Lyon, France",
+      email: "t.legrand@expert.fr",
+      phone: "04 72 56 78 90",
+      avatar: "https://randomuser.me/api/portraits/men/22.jpg",
+      specialties: ["Contentieux social", "Harcèlement", "Ruptures conventionnelles"],
+      expertiseLevel: "Expert confirmé",
+      availability: "Disponible sous 24h"
+    }
+  ];
+  
+  // Add new experts to the database
+  expertsDatabase = [...originalExperts, ...newExperts];
+  
+  console.log("Base de données mise à jour. Nombre total d'experts:", expertsDatabase.length);
+  
+  return Promise.resolve();
+};
+
+/**
+ * Reset experts database to original state
+ */
+export const resetExpertsDatabase = () => {
+  expertsDatabase = [...originalExperts];
+  return Promise.resolve();
 };

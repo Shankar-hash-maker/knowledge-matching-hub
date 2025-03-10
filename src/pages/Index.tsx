@@ -3,14 +3,17 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import SearchBar from '@/components/SearchBar';
 import ExpertCard from '@/components/ExpertCard';
+import PdfDatabaseImport from '@/components/PdfDatabaseImport';
 import { Expert } from '@/utils/expertMatching';
-import { Check, SearchX } from 'lucide-react';
+import { Check, SearchX, Database } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const location = useLocation();
   const [experts, setExperts] = useState<Expert[] | null>(null);
   const [searchQuery, setSearchQuery] = useState<{ keyword: string; location: string } | null>(null);
   const [searching, setSearching] = useState(false);
+  const [showDatabaseImport, setShowDatabaseImport] = useState(false);
 
   useEffect(() => {
     if (location.state?.experts && location.state?.searchQuery) {
@@ -42,7 +45,25 @@ const Index = () => {
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Décrivez le type d'expertise dont vous avez besoin et trouvez le spécialiste qui vous correspond.
           </p>
+          
+          <div className="mt-4">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1"
+              onClick={() => setShowDatabaseImport(!showDatabaseImport)}
+            >
+              <Database className="h-4 w-4" />
+              <span>{showDatabaseImport ? "Masquer l'import" : "Importer une base de données"}</span>
+            </Button>
+          </div>
         </header>
+        
+        {showDatabaseImport && (
+          <div className="max-w-lg mx-auto mb-8 animate-fade-in">
+            <PdfDatabaseImport />
+          </div>
+        )}
         
         <SearchBar />
         

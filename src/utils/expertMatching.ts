@@ -85,7 +85,7 @@ const expertsDatabase: Expert[] = [
  * Simulates a deep learning search to find relevant experts
  * In a real implementation, this would use vector embeddings or a similar technique
  */
-export const findExperts = async (keyword: string, location: string = ''): Promise<Expert[]> {
+export const findExperts = async (keyword: string, location: string = '') => {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 1500));
   

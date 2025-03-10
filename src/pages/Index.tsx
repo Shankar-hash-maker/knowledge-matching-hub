@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import SearchBar from '@/components/SearchBar';
@@ -7,6 +6,7 @@ import PdfDatabaseImport from '@/components/PdfDatabaseImport';
 import { Expert } from '@/utils/expertMatching';
 import { Check, SearchX, Database } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import ApiKeyInput from '@/components/ApiKeyInput';
 
 const Index = () => {
   const location = useLocation();
@@ -64,6 +64,8 @@ const Index = () => {
             <PdfDatabaseImport />
           </div>
         )}
+        
+        <ApiKeyInput />
         
         <SearchBar />
         

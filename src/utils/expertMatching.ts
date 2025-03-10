@@ -1,4 +1,3 @@
-
 export interface Expert {
   id: string;
   name: string;
@@ -85,25 +84,25 @@ let expertsDatabase: Expert[] = [
 // Store original experts for reset
 const originalExperts = [...expertsDatabase];
 
-let perplexityApiKey: string | null = null;
+let openaiApiKey: string | null = null;
 
-export const setPerplexityApiKey = (key: string) => {
-  perplexityApiKey = key;
+export const setOpenAIApiKey = (key: string) => {
+  openaiApiKey = key;
 };
 
 async function analyzeSearchQuery(query: string): Promise<string> {
-  if (!perplexityApiKey) {
-    throw new Error('Perplexity API key not set');
+  if (!openaiApiKey) {
+    throw new Error('OpenAI API key not set');
   }
 
-  const response = await fetch('https://api.perplexity.ai/chat/completions', {
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${perplexityApiKey}`,
+      'Authorization': `Bearer ${openaiApiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'llama-3.1-sonar-small-128k-online',
+      model: 'gpt-4o-mini',
       messages: [
         {
           role: 'system',
@@ -277,3 +276,4 @@ export const resetExpertsDatabase = () => {
   expertsDatabase = [...originalExperts];
   return Promise.resolve();
 };
+

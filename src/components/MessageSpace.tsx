@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Paperclip, ChevronRight, ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -6,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import FileUpload from './FileUpload';
-import { Expert } from '@/utils/expertMatching';
+import { Expert } from '@/utils/experts';
 
 interface MessageSpaceProps {
   expert: Expert;

@@ -1,30 +1,53 @@
+
 import React, { useState } from 'react';
 import { Search, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
-import { findExperts } from '@/utils/experts';
+import { searchExperts } from '@/services/expertService';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 
 const SearchBar = () => {
   const [keyword, setKeyword] = useState('');
   const [location, setLocation] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (!keyword.trim()) return;
+
+    // Check if user is authenticated
+    if (!user) {
+      toast({
+        title: "Authentification requise",
+        description: "Veuillez vous connecter pour effectuer une recherche.",
+        variant: "destructive",
+      });
+      
+      navigate('/auth');
+      return;
+    }
     
     setIsSearching(true);
     
     try {
-      // Simulate API call with delay
-      const experts = await findExperts(keyword, location);
+      // Use the expert service to search for experts
+      const experts = await searchExperts(keyword, location);
       
       // Navigate to results with the data
       navigate('/', { state: { experts, searchQuery: { keyword, location } } });
     } catch (error) {
       console.error('Search error:', error);
+      toast({
+        title: "Erreur de recherche",
+        description: "Une erreur s'est produite lors de la recherche des experts.",
+        variant: "destructive",
+      });
     } finally {
       setIsSearching(false);
     }

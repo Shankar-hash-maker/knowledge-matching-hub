@@ -1,16 +1,19 @@
 
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 import SearchBar from '@/components/SearchBar';
 import ExpertCard from '@/components/ExpertCard';
 import PdfDatabaseImport from '@/components/PdfDatabaseImport';
 import { Expert } from '@/utils/experts';
-import { Check, SearchX, Database } from 'lucide-react';
+import { Check, SearchX, Database, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ApiKeyInput from '@/components/ApiKeyInput';
+import { supabase } from '@/integrations/supabase/client';
 
 const Index = () => {
   const location = useLocation();
+  const { user, profile } = useAuth();
   const [experts, setExperts] = useState<Expert[] | null>(null);
   const [searchQuery, setSearchQuery] = useState<{ keyword: string; location: string } | null>(null);
   const [searching, setSearching] = useState(false);
@@ -26,6 +29,63 @@ const Index = () => {
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
+
+  // Fetch experts from Supabase
+  const fetchExperts = async () => {
+    try {
+      // Fetch expert profiles
+      const { data: expertsData, error } = await supabase
+        .from('experts')
+        .select(`
+          id,
+          title,
+          description,
+          location,
+          phone,
+          avatar,
+          specialties,
+          expertise_level,
+          availability,
+          profiles (
+            first_name,
+            last_name,
+            email
+          )
+        `);
+      
+      if (error) {
+        throw error;
+      }
+      
+      // Map the data to match the Expert interface
+      if (expertsData) {
+        const formattedExperts = expertsData.map(expert => ({
+          id: expert.id,
+          name: `${expert.profiles.first_name} ${expert.profiles.last_name}`,
+          title: expert.title || '',
+          description: expert.description || '',
+          location: expert.location || '',
+          email: expert.profiles.email || '',
+          phone: expert.phone || '',
+          avatar: expert.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + expert.id,
+          specialties: expert.specialties || [],
+          expertiseLevel: expert.expertise_level || '',
+          availability: expert.availability || '',
+        }));
+        
+        setExperts(formattedExperts);
+      }
+    } catch (error) {
+      console.error('Error fetching experts:', error);
+    }
+  };
+
+  // On page load, fetch experts if user is authenticated
+  useEffect(() => {
+    if (user && !experts) {
+      fetchExperts();
+    }
+  }, [user]);
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
@@ -47,26 +107,40 @@ const Index = () => {
             Décrivez le type d'expertise dont vous avez besoin et trouvez le spécialiste qui vous correspond.
           </p>
           
-          <div className="mt-4">
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-1"
-              onClick={() => setShowDatabaseImport(!showDatabaseImport)}
-            >
-              <Database className="h-4 w-4" />
-              <span>{showDatabaseImport ? "Masquer l'import" : "Importer une base de données"}</span>
-            </Button>
-          </div>
+          {user && (
+            <div className="mt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1"
+                onClick={() => setShowDatabaseImport(!showDatabaseImport)}
+              >
+                <Database className="h-4 w-4" />
+                <span>{showDatabaseImport ? "Masquer l'import" : "Importer une base de données"}</span>
+              </Button>
+              
+              {!profile?.is_expert && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1 ml-2"
+                  onClick={() => window.location.href = "/expert-registration"}
+                >
+                  <UserPlus className="h-4 w-4" />
+                  <span>Devenir expert</span>
+                </Button>
+              )}
+            </div>
+          )}
         </header>
         
-        {showDatabaseImport && (
+        {showDatabaseImport && user && (
           <div className="max-w-lg mx-auto mb-8 animate-fade-in">
             <PdfDatabaseImport />
           </div>
         )}
         
-        <ApiKeyInput />
+        {user && <ApiKeyInput />}
         
         <SearchBar />
         

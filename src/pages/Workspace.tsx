@@ -1,19 +1,27 @@
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Expert, getExpertById } from '@/utils/experts';
+import { useParams, useNavigate, Navigate } from 'react-router-dom';
+import { Expert } from '@/utils/experts';
+import { fetchExpertById } from '@/services/expertService';
 import WorkspaceHeader from '@/components/workspace/WorkspaceHeader';
 import ExpertProfile from '@/components/workspace/ExpertProfile';
 import WorkspaceContent from '@/components/workspace/WorkspaceContent';
 import PaymentSection from '@/components/workspace/PaymentSection';
+import { useAuth } from '@/hooks/useAuth';
 
 const Workspace = () => {
   const { expertId } = useParams<{ expertId: string }>();
   const navigate = useNavigate();
+  const { user, isLoading: authLoading } = useAuth();
   const [expert, setExpert] = useState<Expert | null>(null);
   const [loading, setLoading] = useState(true);
   const [showPayment, setShowPayment] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
+  
+  // If user is not logged in, redirect to auth page
+  if (!user && !authLoading) {
+    return <Navigate to="/auth" />;
+  }
   
   useEffect(() => {
     const fetchExpert = async () => {
@@ -23,7 +31,7 @@ const Workspace = () => {
       }
       
       try {
-        const expertData = await getExpertById(expertId);
+        const expertData = await fetchExpertById(expertId);
         if (expertData) {
           setExpert(expertData);
         } else {
@@ -37,15 +45,17 @@ const Workspace = () => {
       }
     };
     
-    fetchExpert();
-  }, [expertId, navigate]);
+    if (user) {
+      fetchExpert();
+    }
+  }, [expertId, navigate, user]);
   
   const handlePaymentSuccess = () => {
     setIsPaid(true);
     setShowPayment(false);
   };
   
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="loading-dots">

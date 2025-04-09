@@ -9,6 +9,56 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      experts: {
+        Row: {
+          availability: string | null
+          avatar: string | null
+          created_at: string
+          description: string | null
+          expertise_level: string | null
+          id: string
+          location: string | null
+          phone: string | null
+          specialties: string[] | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          availability?: string | null
+          avatar?: string | null
+          created_at?: string
+          description?: string | null
+          expertise_level?: string | null
+          id: string
+          location?: string | null
+          phone?: string | null
+          specialties?: string[] | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          availability?: string | null
+          avatar?: string | null
+          created_at?: string
+          description?: string | null
+          expertise_level?: string | null
+          id?: string
+          location?: string | null
+          phone?: string | null
+          specialties?: string[] | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experts_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       patient: {
         Row: {
           created_at: string
@@ -21,6 +71,36 @@ export type Database = {
         Update: {
           created_at?: string
           id?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          first_name: string | null
+          id: string
+          is_expert: boolean
+          last_name: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          first_name?: string | null
+          id: string
+          is_expert?: boolean
+          last_name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          first_name?: string | null
+          id?: string
+          is_expert?: boolean
+          last_name?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
